@@ -36,10 +36,19 @@ class displaCy {
         let xhr = new XMLHttpRequest();
         xhr.open('POST', this.api, true);
         xhr.setRequestHeader('Content-type', 'text/plain');
+        //xhr.setRequestHeader('Content-type', 'application/json');
         xhr.onreadystatechange = () => {
             if(xhr.readyState === 4 && xhr.status === 200) {
                 if(typeof this.onSuccess === 'function') this.onSuccess();
+                console.log("Response")
+                console.log(JSON.parse(xhr.responseText))
                 this.render(JSON.parse(xhr.responseText), settings, text);
+                // TODO (egaebel): This is my commented out super hacky change
+                /*
+                let json_text = "{\"words\": [{\"text\": \"Can\", \"tag\": \"MD\"}, {\"text\": \"you\", \"tag\": \"PRP\"}, {\"text\": \"agree\", \"tag\": \"VB\"}, {\"text\": \"?\", \"tag\": \".\"}], \"arcs\": [{\"start\": 0, \"end\": 2, \"dir\": \"left\", \"label\": \"aux\"}, {\"start\": 1, \"end\": 2, \"dir\": \"left\", \"label\": \"nsubj\"}, {\"start\": 2, \"end\": 3, \"dir\": \"right\", \"label\": \"punct\"}]}";
+                let temp_text = "Bob brought the pizza to Alice.";
+                this.render(JSON.parse(json_text), settings, temp_text);
+                */
             }
 
             else if(xhr.status !== 200) {
@@ -56,6 +65,14 @@ class displaCy {
             collapse_punctuation: (settings.collapsePunct != undefined) ? settings.collapsePunct : this.collapsePunct,
             collapse_phrases: (settings.collapsePhrase != undefined) ? settings.collapsePhrase : this.collapsePhrase
         }));
+        // (egaebel): Uncomment for console logging
+        ///*
+        console.log("Request:");
+        console.log(JSON.stringify({ text, model,
+            collapse_punctuation: (settings.collapsePunct != undefined) ? settings.collapsePunct : this.collapsePunct,
+            collapse_phrases: (settings.collapsePhrase != undefined) ? settings.collapsePhrase : this.collapsePhrase
+        }));
+        //*/
     }
 
     render(parse, settings = {}, text) {
